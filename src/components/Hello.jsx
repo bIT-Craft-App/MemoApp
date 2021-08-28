@@ -16,7 +16,7 @@ function Hello(props) {
 Hello.propTypes = {
   children: string.isRequired, // 文字列型とする 入力必須
   bang: bool, // ブール型とする 入力必須では無いのでデフォルト値が必要!
-  style: shape(),
+  style: shape(), // shape型とする
 };
 // デフォルト値の定義
 Hello.defaultProps = {
