@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import AppBar from '../components/AppBar';
 import MemoList from '../components/MemoList';
@@ -13,7 +13,7 @@ export default function MemoListScreen() {
       {/*  メモリスト */}
       <MemoList />
       {/*  追加ボタン */}
-      <CircleButton>+</CircleButton>
+      <CircleButton name="plus" />
     </View>
   );
 }
