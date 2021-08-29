@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity, Alert,
 } from 'react-native';
@@ -13,6 +13,30 @@ export default function LogInScreen(props) {
   */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  /* useEffectについて
+   useEffect(コールバック関数)
+   propsが変更されるなど、画面が更新されるたびにコールバック関数が実行される
+   useEffect(コールバック関数,[])
+   コンポーネントがマウントされた１回だけコールバック関数が実行される
+   useEffect(コールバック関数,[foo])
+   fooが更新されたらコールバック関数が実行される
+
+   コールバック関数のreturnに関数をセットすると
+   アンマウント時に実行される
+  */
+  useEffect(() => {
+    // unsubscribeにログイン状態監視をキャンセルする関数が代入される
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MemoList' }],
+        });
+      }
+    });
+    // アンマウント時にunsubscribe(ログイン状態監視をキャンセルする関数)が実行される
+    return unsubscribe;
+  }, []);
 
   function handlePress() {
     firebase.auth().signInWithEmailAndPassword(email, password)
