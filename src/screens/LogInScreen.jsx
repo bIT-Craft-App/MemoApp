@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
 } from 'react-native';
@@ -7,12 +7,45 @@ import Button from '../components/Button';
 
 export default function LogInScreen(props) {
   const { navigation } = props;
+  /* useStateについて
+    const[保持したい値, 値を更新する関数] = useState(初期値)
+  */
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
         <Text style={styles.title}>Log In</Text>
-        <TextInput style={styles.input} value="Email Address" />
-        <TextInput style={styles.input} value="Password" />
+        {/*
+          emailにユーザが入力できるようにvalueとonChangeTextを下記のようにする
+          value={email}
+          onChangeText={(text) => { setEmail(text); }}
+        */}
+        {/*
+          autoCapitalize="none" 先頭が大文字にならない、
+          keyboardType="email-address" キーボードタイプがemailを打ちやすいようになる
+          placefolder="Email Address" 最初に薄くEmail Addressと表示
+          textContentType="emailAddress" これを入れておくと入力候補を出してくれる
+        */}
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={(text) => { setEmail(text); }}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          placeholder="Email Address"
+          textContentType="emailAddress"
+        />
+        { /* secureEntryにより入力したときに隠される */}
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={(text) => { setPassword(text); }}
+          autoCapitalize="none"
+          placeholder="Password"
+          secureTextEntry
+          textContentType="password"
+        />
         <Button
           label="Submit"
           onPress={() => {
