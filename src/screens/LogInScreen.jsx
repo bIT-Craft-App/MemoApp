@@ -5,6 +5,8 @@ import {
 import firebase from 'firebase';
 
 import Button from '../components/Button';
+import Loading from '../components/Loading';
+import { isLong } from 'long';
 
 export default function LogInScreen(props) {
   const { navigation } = props;
@@ -13,6 +15,8 @@ export default function LogInScreen(props) {
   */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
   /* useEffectについて
    useEffect(コールバック関数)
    propsが変更されるなど、画面が更新されるたびにコールバック関数が実行される
@@ -32,29 +36,36 @@ export default function LogInScreen(props) {
           index: 0,
           routes: [{ name: 'MemoList' }],
         });
+      } else {
+        setIsLoading(false);
       }
     });
     // アンマウント時にunsubscribe(ログイン状態監視をキャンセルする関数)が実行される
     return unsubscribe;
   }, []);
-
+  // submitボタン実行時
   function handlePress() {
+    setIsLoading(true);
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const { user } = userCredential;
         console.log(user.uid);
         navigation.reset({
-          ndex: 0,
+          index: 0,
           routes: [{ name: 'MemoList' }],
         });
       })
       .catch((error) => {
         Alert.alert(error.message);
+      })
+      .then(() => { // 正常でもエラーでも実行される
+        setIsLoading(false);
       });
   }
 
   return (
     <View style={styles.container}>
+      <Loading isLoading={isLoading} />
       <View style={styles.inner}>
         <Text style={styles.title}>Log In</Text>
         {/*

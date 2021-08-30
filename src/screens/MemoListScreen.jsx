@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import {
+  View, StyleSheet, Alert, Text,
+} from 'react-native';
 import firebase from 'firebase';
 import MemoList from '../components/MemoList';
 import CircleButton from '../components/CircleButton';
 import LogOutButton from '../components/LogOutButton';
+import Button from '../components/Button';
+import Loading from '../components/Loading';
 
 export default function MemoListScreen(props) {
   const { navigation } = props;
   const [memos, setMemos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <LogOutButton />,
@@ -19,6 +24,7 @@ export default function MemoListScreen(props) {
     const { currentUser } = firebase.auth();
     let unsubScribe = () => {};
     if (currentUser) {
+      setIsLoading(true);
       const ref = db.collection(`users/${currentUser.uid}/memos`).orderBy('updatedAt', 'desc');
       unsubScribe = ref.onSnapshot((snapshot) => {
         const userMemos = [];
@@ -32,13 +38,31 @@ export default function MemoListScreen(props) {
           });
         });
         setMemos(userMemos);
+        setIsLoading(false);
       }, (error) => {
         console.log(error);
+        setIsLoading(false);
         Alert.alert('データ読み込みに失敗しました。');
       });
     }
     return unsubScribe;
   }, []);
+  if (memos.length === 0) {
+    return (
+      <View style={emptyStyles.container}>
+        <Loading isLoading={isLoading} />
+        <View style={emptyStyles.inner}>
+          <Text style={emptyStyles.title}>最初のメモを作成しよう</Text>
+          <Button
+            style={emptyStyles.button}
+            label="作成する"
+            onPress={() => { navigation.navigate('MemoCreate'); }}
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/*  メモリスト */}
@@ -61,5 +85,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // 縦方向の並べ方
     flexDirection: 'row', // これを入れると方向は逆
     */
+  },
+});
+
+const emptyStyles = StyleSheet.create({
+  container: {
+    flex: 1, // 画面全体
+    backgroundColor: '#F0F4F8',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 24,
+  },
+  button: {
+    alignSelf: 'center',
   },
 });
