@@ -18,8 +18,8 @@ export default function MemoCreateScreen(props) {
     ref.add({
       // キーは自分で決めることができる！
       bodyText, // 本文 bodyText: bodyText, と同じ
-      updateAt: new Date(),
-      testParam: 1,
+      updatedAt: new Date(),
+      // testParam: 1, こんな感じで好きなものを追加できる
     })
       .then((docRef) => {
         console.log('Created!', docRef.id);
