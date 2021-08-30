@@ -11,7 +11,6 @@ import { dateToString } from '../utils';
 export default function MemoDetailScreen(props) {
   const { navigation, route } = props;
   const { id } = route.params;
-  console.log(id);
   const [memo, setMemo] = useState(null);
 
   useEffect(() => {
@@ -21,7 +20,6 @@ export default function MemoDetailScreen(props) {
       const db = firebase.firestore();
       const ref = db.collection(`users/${currentUser.uid}/memos`).doc(id);
       unsubscribe = ref.onSnapshot((doc) => {
-        console.log(doc.id, doc.data());
         const data = doc.data();
         setMemo({
           id: doc.id,
@@ -41,10 +39,12 @@ export default function MemoDetailScreen(props) {
         <Text style={styles.memoDate}>{dateToString(memo && memo.updatedAt)}</Text>
       </View>
       { /* メモ本体 */}
-      <ScrollView style={styles.memoBody}>
-        <Text style={styles.memoText}>
-          {memo && memo.bodyText}
-        </Text>
+      <ScrollView>
+        <View style={styles.memoBodyInner}>
+          <Text style={styles.memoText}>
+            {memo && memo.bodyText}
+          </Text>
+        </View>
       </ScrollView>
       <CircleButton
         style={{ top: 60, bottom: 'auto' }}
@@ -89,9 +89,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
   },
-  memoBody: {
+  memoBodyInner: {
     paddingVertical: 32,
     paddingHorizontal: 27,
+    paddingBottom: 80,
   },
   memoText: {
     fontSize: 16,
